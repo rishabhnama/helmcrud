@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template include "mysql.fullname" . }}
+  name: {{ template "mysql.fullname" . }}
   labels:
-    {{- template include "mysql.labels" . | nindent 4 }}
+    {{- template "mysql.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.mysql.autoscaling.enabled }}
   replicas: {{ .Values.mysql.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- template include "mysql.selectorLabels" . | nindent 6 }}
+      {{- template "mysql.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.mysql.podAnnotations }}
@@ -18,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- template include "mysql.selectorLabels" . | nindent 8 }}
+        {{- template "mysql.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.mysql.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ template include "mysql.serviceAccountName" . }}
+      serviceAccountName: {{ template "mysql.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.mysql.podSecurityContext | nindent 8 }}
       containers:

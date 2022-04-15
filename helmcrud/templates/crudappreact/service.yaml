@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template include "crudappreact.fullname" . }}
+  name: {{ template "crudappreact.fullname" . }}
   labels:
-    {{- template include "crudappreact.labels" . | nindent 4 }}
+    {{- template "crudappreact.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.crudappreact.service.type }}
   ports:
@@ -12,4 +12,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- template include "crudappreact.selectorLabels" . | nindent 4 }}
+    {{- template "crudappreact.selectorLabels" . | nindent 4 }}

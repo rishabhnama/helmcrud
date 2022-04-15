@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template include "crudappreact.fullname" . }}
+  name: {{ template "crudappreact.fullname" . }}
   labels:
-    {{- template include "crudappreact.labels" . | nindent 4 }}
+    {{- template "crudappreact.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.crudappreact.autoscaling.enabled }}
   replicas: {{ .Values.crudappreact.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- template include "crudappreact.selectorLabels" . | nindent 6 }}
+      {{- template "crudappreact.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.crudappreact.podAnnotations }}
@@ -18,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- template include "crudappreact.selectorLabels" . | nindent 8 }}
+        {{- template "crudappreact.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.crudappreact.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ template include "crudappreact.serviceAccountName" . }}
+      serviceAccountName: {{ template "crudappreact.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.crudappreact.podSecurityContext | nindent 8 }}
       containers:
