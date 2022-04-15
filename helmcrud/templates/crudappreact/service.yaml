@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template include "crudappreact.fullname" . }}
+  labels:
+    {{- template include "crudappreact.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.crudappreact.service.type }}
+  ports:
+    - port: {{ .Values.crudappreact.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- template include "crudappreact.selectorLabels" . | nindent 4 }}

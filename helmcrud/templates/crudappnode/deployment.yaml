@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template include "crudappnode.fullname" . }}
+  labels:
+    {{- template include "crudappnode.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.crudappnode.autoscaling.enabled }}
+  replicas: {{ .Values.crudappnode.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- template include "crudappnode.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.crudappnode.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- template include "crudappnode.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.crudappnode.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ template include "crudappnode.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.crudappnode.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.crudappnode.securityContext | nindent 12 }}
+          image: "{{ .Values.crudappnode.image.repository }}:{{ .Values.crudappnode.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.crudappnode.image.pullPolicy }}
+          env:
+            - name: "MYSQL_ROOT_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: {{ .Release.Name }}-auth
+            # - name: "MYSQL_USER"
+            #   valueFrom:
+            #     secretKeyRef:
+            #       key: user
+            #       name: {{ .Release.Name }}-auth
+
+            # - name: "MYSQL_PASSWORD"
+            #   valueFrom:
+            #     secretKeyRef:
+            #       key: password2
+            #       name: {{ .Release.Name }}-auth
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.crudappnode.resources | nindent 12 }}
+      {{- with .Values.crudappnode.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.crudappnode.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.crudappnode.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
