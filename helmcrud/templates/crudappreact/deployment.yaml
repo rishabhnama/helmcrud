@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "crudappreact.fullname" . }}
+  name: {{ include "crudappreact.fullname" . }}
   labels:
-    {{- template "crudappreact.labels" . | nindent 4 }}
+    {{- include "crudappreact.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.crudappreact.autoscaling.enabled }}
   replicas: {{ .Values.crudappreact.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- template "crudappreact.selectorLabels" . | nindent 6 }}
+      {{- include "crudappreact.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.crudappreact.podAnnotations }}
@@ -18,20 +18,20 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- template "crudappreact.selectorLabels" . | nindent 8 }}
+        {{- include "crudappreact.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.crudappreact.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ template "crudappreact.serviceAccountName" . }}
+      serviceAccountName: {{ include "crudappreact.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.crudappreact.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.crudappreact.securityContext | nindent 12 }}
-          image: "{{ .Values.image.crudappreact.repository }}:{{ .Values.crudappreact.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.crudappreact.image.repository }}:{{ .Values.crudappreact.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.crudappreact.image.pullPolicy }}
           ports:
             - name: http

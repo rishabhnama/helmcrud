@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "crudappnode.fullname" . }}
+  name: {{ include "crudappnode.fullname" . }}
   labels:
-    {{- template "crudappnode.labels" . | nindent 4 }}
+    {{- include "crudappnode.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.crudappnode.service.type }}
   ports:
@@ -12,4 +12,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- template "crudappnode.selectorLabels" . | nindent 4 }}
+    {{- include "crudappnode.selectorLabels" . | nindent 4 }}
