@@ -38,7 +38,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: password
-                  name: {{ .Release.Name }}-auth
+                  name: {{ .Release.Name }}-mysql
             # - name: "MYSQL_USER"
             #   valueFrom:
             #     secretKeyRef:
